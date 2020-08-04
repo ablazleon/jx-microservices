@@ -104,7 +104,7 @@ Then, I created an eks cluster, but as the costs grows so quickly I decided to c
     jx create cluster eks --cluster-name mycluster --skip-installation 
     ```
 
-Then it is copied a jx-requirments.yml and modified it accordingly.
+Then it is modified jx-requirments.yml accordingly to set repos to public, insed the jx config boot folder
 
     ```bash
     jx boot 
@@ -122,12 +122,15 @@ First, both services are deployed independently.
 
 Next, the amazon rds is set up, and so the environment 
 
+After, it is set in the env variables the rds config 
+
 Then, both the v0 microservices are imported and took to production.
 
     ```bash
+    jx import --url https://github.com/ablazleon/udagram-frontend.git
     jx import --url https://github.com/ablazleon/udagram-api-users.git
     jx import --url https://github.com/ablazleon/udagram-api-feed.git
-    jx import --url https://github.com/ablazleon/udagram-frontend.git
+
     jx get app
     ```
 It is config the env values in the dev environmanet in a values.yml file
