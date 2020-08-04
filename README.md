@@ -52,7 +52,17 @@ Udacity Cloud Developer Nanodegree Program
 
 - [x] ***The app can be upgraded via rolling-update***: The students can deploy a new version of the application without downtime.
 
-THese logs are icnluded in the readme.md of the screenshot folder
+- [x] ***A/B deployment of the application***: Two versions of the same app can run at the same and service traffic
+
+- [x] ***Monitoring***: The application is monitored by Amazon CloudWatch
+
+My requirements:
+
+- [x] ***that the different versions of the containerized services are stored to be rollback if neccesary***:
+
+- [x] ***that the deploymnet in continous way on kubernetes is managed through git pull requests***:
+
+- [x] ***that it is provision three environments (development, staging and production)***:
 
 
 ### Steps
@@ -63,8 +73,6 @@ In gke is tried to create a cluster iwht much more memory but a problem is found
 ![401updateAuth.yml](https://github.com/ablazleon/udagram_microservices/blob/master/screenshots/401updateAuth.yml.png)
 
 Previuosly it is tried with eks, but the wsl gives errors with jx boot and it is not possible to create a cluster from an ubuntu server. So it is created the cluster in wsl and use "aws eks --region us-west-2 update-kubeconfig --name c". But, it is obtained a "error: You must be logged in to the server (Unauthorized)" 
-
-
 
 ![GKE-logs](https://github.com/ablazleon/udagram_microservices/blob/master/screenshots/GKE-logs.png)
 
@@ -141,128 +149,6 @@ THen it is included a .travis to run the steps out of the cluster
 
 ---------------------
 
-#### 2. With k8s alone
-
-To do so it is created some kubernetes arquitecture with a reverse proxy and services and a config map
-
-    ```bash
-    eksctl create cluster \
-     --name c2 \
-     --version 1.16 \
-     --without-nodegroup
-    ```
-    
-    https://docs.aws.amazon.com/eks/latest/userguide/launch-workers.html
-    
-    ```bash
-    eksctl create nodegroup \
-    --cluster default \
-    --version auto \
-    --name standard-nodes \
-    --node-type t3.medium \
-    --node-ami auto \
-    --nodes 3 \
-    --nodes-min 1 \
-    --nodes-max 4
-    ```
-    
-Then it is applied the deplyoment for the forntend, then the service and check witht the port forward if that works.
-
-    ```bash
-    kubectl apply -f frontend-dpl.yml
-    kubectl apply -f frontend-svc.yml
-    ```
-    
-    ```bash
-    kubectl get po
-    kubectl port-forward pod/PODNAME 8100:80 
-    http://localhost:8100
-    ```
-    
-    I'm going to set the congig map
-    
-      ```bash
-    kubectl apply -f configMap.yml   
-     
-    kubectl apply -f api-users-dpl.yml
-    kubectl apply -f api-users-svc.yml 
-    
-    kubectl apply -f api-feed-dpl.yml
-    kubectl apply -f api-feed-svc.yml 
-    ```  
-    
-    Finally, a reverse-proxy is set up.
-    
-    https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html#:~:text=EKSUser%20Guide-,ALB%20Ingress%20Controller%20on%20Amazon%20EKS,ingress.class:%20alb%20annotation.
-    
-    ```bash
-    eksctl utils associate-iam-oidc-provider \
-    --region us-west-2 \
-    --cluster c1 \
-    --approve
-       
-    curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/v1.1.8/docs/examples/iam-policy.json
-    
-    aws iam create-policy \
-    --policy-name ALBIngressControllerIAMPolicy \
-    --policy-document file://iam-policy.json
-    
-    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/v1.1.8/docs/examples/rbac-role.yaml
-    
-    eksctl create iamserviceaccount \
-    --region us-west-2 \
-    --name alb-ingress-controller \
-    --namespace kube-system \
-    --cluster c1 \
-    --attach-policy-arn arn:aws:iam::764217278004:policy/ALBIngressControllerIAMPolicy \
-    --override-existing-serviceaccounts \
-    --approve
-    
-    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/v1.1.8/docs/examples/alb-ingress-controller.yaml
-    
-    kubectl edit deployment.apps/alb-ingress-controller -n kube-system
-    
-    spec:
-      containers:
-      - args:
-        - --ingress-class=alb
-        - --cluster-name=c1
-    
-    kubectl get pods -n kube-system  
-    ```  
-    
-It's checked that this ing controller is created.
-
-    ```bash
-    kubectl apply -f ingCtl.yml
-    ```
- So the commands to create the deployment are the following:
- 
-     ```bash
-    kubectl apply -f frontend-dpl.yml
-    kubectl apply -f frontend-svc.yml
-    
-    kubectl apply -f configMap.yml   
-     
-    kubectl apply -f api-users-dpl.yml
-    kubectl apply -f api-users-svc.yml 
-    
-    kubectl apply -f api-feed-dpl.yml
-    kubectl apply -f api-feed-svc.yml 
-        
-    kubectl apply -f ingCtl.yml
-    
-    kubectl autoscale deployment frontend --cpu-percent=70 --max=4
-    ```
-As it appears a sequelize error it is ccheked with kube command if the environemnt values are exported. 
-
-    ```bash
-    kubectl exec PODNAME
-    ```
-
-It is cheked this is beacuse the databse was not configure to accept all ips
-
-THe problem is why in local it is connected to the port 8080, but there not.
 
 ## What I learnt
 
