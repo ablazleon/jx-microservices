@@ -30,65 +30,27 @@ Udacity Cloud Developer Nanodegree Program
 
 # What I did: rubric
 
-Containers and Microservices
+(Option 1): CI/CD, Github & Code Quality
 
-- [x] ***Divide an application into microservices***: /feed and /user backends are separated into independent projects.
+- [x] ***The project demonstrates an understanding of CI and Github.***: All project code is stored in a GitHub repository and a link to the repository has been provided for reviewers. The student uses a CI tool to build the application
 
-It is shown how the three services are deployed succesfully.
+- [x] ***The project has a proper documentation.***: The README file includes introduction how to setup and deploy the project. It explains the main building blocks and has comments in the important files.
 
-![Local](https://github.com/ablazleon/udagram_microservices/blob/master/screenshots/Local.png)
+- [x] ***The project use continuous deployments (CD)***: A CD tool is in place to deploy new version of the app automatically to production. The way is described and easy to follow.
 
-- [x] ***Build and run a container image using Docker***: Project includes Dockerfiles to successfully create Docker images for /feed, /user backends, project frontend, and reverse proxy. Screenshot of DockerHub shows the images.
+(Option 1): Container
 
-![Dockerhub](https://github.com/ablazleon/udagram_microservices/blob/master/screenshots/DeploymentPipeline_DockerHub.png)
+- [x] ***The app is containerized***: There is a Dockerfile in repo and the docker image can be build.
 
-Independent Releases and Deployments
+- [x] ***The project have public docker images***: Starting the app as a container on a local system
 
-- [x] ***Use Travis to build a CI/CD pipeline***: Project includes a .travis.yml file. Screenshot of the Travis CI interface shows a successful build and deploy job.
+- [x] ***The applications runs in a container without errors***: Screenshot of Kubernetes services shows a reverse proxy
 
-This image shows that in the travis dashboard the job is done succesfully.
+(Option 1): Deployment
 
-![Travis](https://github.com/ablazleon/udagram_microservices/blob/master/screenshots/Travis.png)
+- [x] ***The application runs on a cluster in the cloud***: The project can be deployed to a kubernetes cluster.
 
-Service Orchestration with Kubernetes
-
-- [x] ***Deploy microservices using a Kubernetes cluster on AWS***: 
-
-THe deployment followed this configuration:
-
-<img src="http://yuml.me/diagram/scruffy/class/[Client]->[Ingress Controller (Nginx) : frontend]->[frontend :80],[Client]->[Ingress Controller (Nginx) : frontend]->[api-users :80], [Client]->[Ingress Controller (Nginx) : frontend]->[api-feed :80]" >
-
-- A screenshots of kubectl commands show the Frontend and API projects deployed in Kubernetes.
-Url
-
-http://06b9df6f-default-udagramin-c386-517150989.us-west-2.elb.amazonaws.com
-
-![Travis](https://github.com/ablazleon/udagram_microservices/blob/master/screenshots/frontend-register.png)
-
-
-- The output of kubectl get pods indicates that the pods are running successfully with the STATUS value Running.
-
-THese logs are icnluded in the readme.md of the screenshot folder
-
-- The output of kubectl describe services does not expose any sensitive strings such as database passwords.
-
-In readme.md of screen hot folder is included these logs
-
-- [x] ***Use a reverse proxy to direct requests to the appropriate backend***: Screenshot of Kubernetes services shows a reverse proxy
-
-THese logs are icnluded in the readme.md of the screenshot folder
-
-- [x] ***Configure scaling and self-healing for each service***: 
-
-- Kubernetes services are replicated. At least one of the Kubernetes services has replicas: defined with a value greater than 1 in its deployment.yml file.
-
-- Screenshot of Kubernetes cluster of command kubectl describe hpa has autoscaling configured with CPU metrics.
-
-THese logs are icnluded in the readme.md of the screenshot folder
-
-Debugging, Monitoring, and Logging
-
-- [x] ***Use logs to capture metrics for debugging a microservices deployment***: Screenshot of one of the backend API pod logs indicates user activity that is logged when an API call is made.
+- [x] ***The app can be upgraded via rolling-update***: The students can deploy a new version of the application without downtime.
 
 THese logs are icnluded in the readme.md of the screenshot folder
 
@@ -118,7 +80,7 @@ Previuosly it is tried with eks, but the wsl gives errors with jx boot and it is
 #### 1.2 Set up the service
 #### 1.3 Develop the service
 
-#### 2. With k8s alone
+-------------
 
 #### 1 Set up cluster
 
@@ -149,6 +111,8 @@ To check it works, it is created a quickstart. Then it is checked that the rever
 #### 2 Set up the service
 
 First, both services are deployed independently.
+
+Next, the amazon rds is set up, and so the environment 
 
 Then, both the v0 microservices are imported and took to production.
 
